@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{%block content %}
+    {{ string }}
+    {% if request.user.is_authenticated %}
+        <h1> HELLO, AUTHENTICATED USER</h1>
+    {%else%}
+        <h1>HELLO,UNAUTHENTICATED USER</h1>
+    {%endif%}
+
+{% endblock %}

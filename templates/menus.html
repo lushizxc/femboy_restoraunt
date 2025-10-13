@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{%block content%}
+    {% for menu in menus %}
+
+    <h1>{{menu.name}}</h1>
+
+    <h3>Блюда в меню: </h3>
+    <ul>
+        {% for dish in menu.dishes_in_menu.all %}
+        <li>
+            <h4>{{dish.name}}</h4>
+            <p>{{dish.description}}</p>
+            <p><strong>Цена:</strong> {{dish.price}}$ | <strong>Вес:</strong> {{dish.weight}} г.</p>
+        </li>
+        {%endfor%}
+    </ul>
+    {% endfor %}
+{% endblock %}
