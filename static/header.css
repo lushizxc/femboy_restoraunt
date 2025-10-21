@@ -1,13 +1,13 @@
 .as-button{display: inline-block;
 padding: 8px 16px;
 border-radius: 4px;
-background-color: #ff00fd;
-color: #5E5694;
+background-color: deeppink;
+color: darkred;
 text-align: center;
 text-decoration: none;
 cursor: pointer;
 border: 1px solid transparent}
 
 .as-button:hover{
-    background-color: deeppink;
+    background-color: palevioletred;
 }

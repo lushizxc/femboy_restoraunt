@@ -1,0 +1,7 @@
+{% extends "base.html"%}
+{% block content %}
+    <h1>Заказ: {{table.id}}</h1>
+    <p>User: {{table.customer.name}}</p>
+    <p>Menu:{{table.femboymenu.name}}</p>
+    <p>Time range:{{table.start_time}} - {{table.end_time }}</p>
+{% endblock %}

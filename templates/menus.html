@@ -1,18 +1,11 @@
 {% extends "base.html" %}
 {%block content%}
-    {% for menu in menus %}
+<li>
+    <a href="/menu1" class = "as-button"> {{menu1.name}} </a>
+    <a href="/menu2" class = "as-button"> {{menu2.name}} </a>
+    <a href="/menu3" class = "as-button"> {{menu3.name}} </a>
+    <a href="/menu4" class = "as-button"> {{menu4.name}} </a>
+    <a href="/menu5" class = "as-button"> {{menu5.name}} </a>
+</li>
 
-    <h1>{{menu.name}}</h1>
-
-    <h3>Блюда в меню: </h3>
-    <ul>
-        {% for dish in menu.dishes_in_menu.all %}
-        <li>
-            <h4>{{dish.name}}</h4>
-            <p>{{dish.description}}</p>
-            <p><strong>Цена:</strong> {{dish.price}}$ | <strong>Вес:</strong> {{dish.weight}} г.</p>
-        </li>
-        {%endfor%}
-    </ul>
-    {% endfor %}
-{% endblock %}
+    {% endblock %}
