@@ -4,32 +4,26 @@
     <form method="POST" action="{% url 'book_table' %}">
         {% csrf_token %}
 
-        <div>
-            <label for="menu_select">Название меню:</label>
-            <select id="menu_select" name="menu-name">
-                <option value="" selected disabled>--- Выберите меню ---</option>
+        <label for="menu_name">Название меню:</label>
+        <select id="menu_name" name="menu-name">
+            <option value="" selected disabled>--- Выберите меню ---</option>
 
-                {% for menu in menu_items %}
-                    <option value="{{ menu.id }}">{{ menu.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
+            {% for menu in menu_items %}
+                <option value="{{menu.id}}">{{menu.name}}</option>
+            {% endfor %}
+        </select>
         <br>
 
-        <div>
-            <label for="start-time">Начало резервации:</label>
-            <input type='datetime-local' id='start-time' name='start-time'>
-        </div>
+        <label for="start-time">Начало резервации:</label>
+        <input type='datetime-local' id='start-time' name='start-time'>
         <br>
 
-        <div>
-            <label for="end-time">Конец резервации:</label>
-            <input type='datetime-local' id='end-time' name='end-time'>
-        </div>
+        <label for="end-time">Конец резервации:</label>
+        <input type='datetime-local' id='end-time' name='end-time'>
         <br>
 
         <button type='submit'>Заказать это меню</button>
 
     </form>
 
-    {% endblock %}
+{% endblock %}

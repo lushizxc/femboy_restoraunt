@@ -1,13 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models import ManyToManyField
+from django.conf import settings
 
-
-class Customer(models.Model):
-    name = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=20)
-    email = models.EmailField()
-
+class CustomUser(AbstractUser):
+    phone_number = models.CharField(max_length=15, unique=True)
 
 class FemboyMenu(models.Model):
     name = models.CharField(max_length=100,unique=True)
@@ -28,7 +25,7 @@ class Dish(models.Model):
 
 class TableOrder(models.Model):
     femboy_menu = models.ForeignKey(FemboyMenu,on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     start_time =  models.DateTimeField()
     end_time = models.DateTimeField()

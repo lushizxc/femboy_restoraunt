@@ -1,11 +1,11 @@
 from importlib.resources.readers import remove_duplicates
 
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render,redirect
 from femboyrestoraunt.models import *
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-
+from django.contrib import messages
 
 def index(request):
     context = {
@@ -31,49 +31,46 @@ def menus_list(request):
 def book_table(request):
     all_menus = FemboyMenu.objects.all()
     context = {
-        'menu_items' : all_menus,
+        'menu_items':all_menus,
     }
 
+
     if request.method == "POST":
-        femboymenu = request.POST.get('menu-name')
+        menu_id =  request.POST.get('menu-name')
         start_time = request.POST.get('start-time')
         end_time = request.POST.get('end-time')
 
+        if not menu_id or not start_time or not end_time:
+            context['error'] = 'Пожалуйста заполните все поля'
+            return render(request, 'booking_form.html', context=context)
         try:
-            femboymenu = FemboyMenu.objects.get(name=femboymenu)
-        except ValueError:
-            return HttpResponse(
-                'Не правильно указанные данные',
-                status=400
-            )
-
+            menu_object = FemboyMenu.objects.get(id=menu_id)
         except FemboyMenu.DoesNotExist:
-            return HttpResponse(
-                'Такого меню не существует',
-                status=404
-            )
-        booking = TableOrder.objects.create(
-            user = request.user,
-            femboy_menu=femboymenu,
+            return HttpResponse('Ошибка: такого меню не существует',status=404)
+        except ValueError:
+            return HttpResponse('Ошибка: неправильный ID меню',status=404)
+        new_booking = TableOrder(
+            femboy_menu=menu_object,
             start_time=start_time,
             end_time=end_time,
+            customer = request.user,
         )
-        return redirect('order-details',pk = booking.id)
+        new_booking.save()
+
+        return redirect('order-details',pk=new_booking.pk)
     else:
-        return render(request, 'booking_form.html',context=context)
+        return render(request, 'booking_form.html')
+
 
 def order_details(request,pk):
     try:
-        booking = TableOrder.objects.get(id=pk)
+        booking = TableOrder.objects.get(pk=pk,user=request.user)
         context = {
             'booking':booking,
-        },
-        return render(request,'order-details.html',contex = context)
+        }
+        return render(request,'order-details.html',context=context)
     except TableOrder.DoesNotExist:
-        return HttpResponse(
-            'Не существует данного заказа',
-            status=404
-        )
+        return HttpResponse('Не существует данного заказа',status=404)
 
 def menu1(request):
     menu1 = FemboyMenu.objects.get(id=1)
@@ -119,6 +116,19 @@ def register(request):
             return redirect('index')
     else:
         form = UserCreationForm(request.POST)
+        messages.error(request, 'Ошибка регистрации')
 
     return render(request,'register.html',{'form':form})
 
+def login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request,data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username,password=password)
+            if user is not None:
+                login(request,user)
+                return redirect(index)
+            else:
+                messages.error(request,'Неправильний логін або пароль')
