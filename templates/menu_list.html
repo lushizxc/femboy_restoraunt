@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% block content %}
+<h1>Наши Фирменные Меню ♡</h1>
+<ul>
+    {% for menu in all_menus %}
+      <li>
+        <a href="{% url 'menu_detail' menu.id %}" class="btn-femboy-pink">
+          {{ menu.name }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -1,6 +1,30 @@
-<a href="/menus" class = "as-button"> Все меню </a>
-<a href="/book-table" class = "as-button"> Заказать столик </a>
-<a href="/register" class = "as-button"> Регистрация </a>
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/header.css' %}">
 
 
+<nav class="header-nav">
+
+    <div class="nav-links-left">
+        <a href="/menus" class="nav-link-left">Все меню</a>
+        <a href="/" class="nav-link">Главная</a>
+    </div>
+
+    <div class="nav-links-right">
+
+        {% if user.is_authenticated %}
+
+            <a href="/book-table" class="nav-link">Заказать столик</a>
+            <a href="{% url 'logout' %}" class="nav-link">Выход</a>
+
+            <span class="nav-username">👋 {{ user.username }}</span>
+
+        {% else %}
+
+            <a href="/register" class="nav-link">Регистрация</a>
+            <a href="/login" class="nav-link">Логин</a>
+        {% endif %}
+
+    </div>
+</nav>
 <hr>

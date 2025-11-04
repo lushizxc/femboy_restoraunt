@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-{%block content%}
-
-    <h1>{{menu2.name}}</h1>
-    {% for dish in menu2.dishes_in_menu.all%}
-    <h2>{{dish.name}} - {{dish.description}}</h2>
-    {% endfor %}
-{% endblock %}
-

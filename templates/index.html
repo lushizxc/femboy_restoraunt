@@ -1,1 +1,46 @@
-{% extends "base.html" %}
+{% extends "base.html"%}
+{% load static %}
+
+{% block content %}
+
+
+    <div class="welcome-container simplified">
+
+        {% if user.is_authenticated %}
+            <h1>Снова добро пожаловать, <strong>{{ user.username }}</strong>!</h1>
+            <p class="subtitle">(´｡• ᵕ •｡`) ♡ Мы вас ждали!</p>
+
+            <div class="reservations-block">
+                <h3>Ваши будущие заказы в Антейку:</h3>
+
+                {% if my_orders %}
+                    <ul class="order-list">
+                        {% for order in my_orders %}
+                        <li>
+                            <strong>{{ order.femboy_menu.name }}</strong>
+                            <br>
+                            Начало: <strong>{{ order.start_time|date:"l, d F Y, H:i" }}</strong>
+                            <br>
+                            (до {{ order.end_time|time:"H:i" }})
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="no-reservations">(⁄ ⁄•⁄ω⁄•⁄ ⁄) Ой! У вас пока нет активных заказов.</p>
+                {% endif %}
+            </div> {% else %}
+
+            <h1>Добро пожаловать в "Антейку" ♡</h1>
+
+            <div class="welcome-text">
+                <p>
+                "Антейку" — это наш тихий уголок, где время течет немного медленнее,
+                а кофе немного слаще. Наши очаровательные официанты готовы
+                подарить вам незабываемые впечатления и уют.
+                </p>
+
+        {% endif %}
+
+    </div>
+</div>
+    {% endblock %}

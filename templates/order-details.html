@@ -1,7 +1,9 @@
 {% extends "base.html"%}
 {% block content %}
-    <h1>Заказ: {{table.id}}</h1>
-    <p>User: {{table.customer.name}}</p>
-    <p>Menu:{{table.femboymenu.name}}</p>
-    <p>Time range:{{table.start_time}} - {{table.end_time }}</p>
-{% endblock %}
+<div class="order-detail">
+    <h1>Заказ: {{booking.id}}</h1>
+    <p>User: {{booking.customer.username}}</p>
+    <p>Menu:{{booking.femboy_menu.name}}</p>
+    <p>Time range:{{booking.start_time}} - {{booking.end_time }}</p>
+</div>
+    {% endblock %}

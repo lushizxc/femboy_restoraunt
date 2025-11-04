@@ -3,7 +3,7 @@
 
     <form method="POST" action="{% url 'book_table' %}">
         {% csrf_token %}
-
+        <div class="order-input">
         <label for="menu_name">Название меню:</label>
         <select id="menu_name" name="menu-name">
             <option value="" selected disabled>--- Выберите меню ---</option>
@@ -22,8 +22,10 @@
         <input type='datetime-local' id='end-time' name='end-time'>
         <br>
 
-        <button type='submit'>Заказать это меню</button>
-
+       <button class="btn-femboy-pink">
+          Заказать столик
+        </button>
+    </div>
     </form>
 
 {% endblock %}

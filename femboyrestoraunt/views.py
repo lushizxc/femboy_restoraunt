@@ -1,32 +1,24 @@
 from importlib.resources.readers import remove_duplicates
 
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.shortcuts import render,redirect
+from django.utils import timezone
+
+from femboyrestoraunt.forms import CustomUserCreationForm
+from django.shortcuts import render, redirect, get_object_or_404
 from femboyrestoraunt.models import *
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
 
 def index(request):
-    context = {
-        'string':'Hello world'
-    }
-    return render(request, 'index.html',context=context)
+    my_orders = []
+    if request.user.is_authenticated:
+        my_orders = TableOrder.objects.filter(customer=request.user)
 
-def menus_list(request):
-    menu1  = FemboyMenu.objects.get(id=1)
-    menu2 = FemboyMenu.objects.get(id=2)
-    menu3 = FemboyMenu.objects.get(id=3)
-    menu4 = FemboyMenu.objects.get(id=4)
-    menu5 = FemboyMenu.objects.get(id=5)
-    context = {
-        'menu1':menu1,
-        'menu2':menu2,
-        'menu3':menu3,
-        'menu4':menu4,
-        'menu5':menu5,
-    }
-    return render(request, 'menus.html',context=context)
+    context = {'my_orders': my_orders}
+    return render(request, 'index.html', context)
+
+
 
 def book_table(request):
     all_menus = FemboyMenu.objects.all()
@@ -36,6 +28,8 @@ def book_table(request):
 
 
     if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect('login')
         menu_id =  request.POST.get('menu-name')
         start_time = request.POST.get('start-time')
         end_time = request.POST.get('end-time')
@@ -57,14 +51,14 @@ def book_table(request):
         )
         new_booking.save()
 
-        return redirect('order-details',pk=new_booking.pk)
+        return redirect('order_details',id=new_booking.id)
     else:
-        return render(request, 'booking_form.html')
+        return render(request, 'booking_form.html',context=context)
 
 
-def order_details(request,pk):
+def order_details(request,id):
     try:
-        booking = TableOrder.objects.get(pk=pk,user=request.user)
+        booking = TableOrder.objects.get(id=id,customer=request.user)
         context = {
             'booking':booking,
         }
@@ -72,55 +66,24 @@ def order_details(request,pk):
     except TableOrder.DoesNotExist:
         return HttpResponse('Не существует данного заказа',status=404)
 
-def menu1(request):
-    menu1 = FemboyMenu.objects.get(id=1)
-    context = {
-        'menu1':menu1,
-    }
-    return render(request, 'menu1.html',context=context)
 
-def menu2(request):
-    menu2 = FemboyMenu.objects.get(id=2)
-    context = {
-        'menu2':menu2,
-    }
-    return render(request, 'menu2.html',context=context)
-
-def menu3(request):
-    menu3 = FemboyMenu.objects.get(id=3)
-    context = {
-        'menu3':menu3,
-    }
-    return render(request, 'menu3.html',context=context)
-
-def menu4(request):
-    menu4 = FemboyMenu.objects.get(id=4)
-    context = {
-        'menu4':menu4,
-    }
-    return render(request, 'menu4.html',context=context)
-
-def menu5(request):
-    menu5 = FemboyMenu.objects.get(id=5)
-    context = {
-        'menu5':menu5,
-    }
-    return render(request, 'menu5.html',context=context)
 
 def register(request):
     if request.method == 'POST':
-        form =  UserCreationForm(request.POST)
+        form =  CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect('index')
+        else:
+            messages.error(request, 'Ошибка регистрации. Проверьте введенные данные.')
     else:
-        form = UserCreationForm(request.POST)
-        messages.error(request, 'Ошибка регистрации')
+        form = CustomUserCreationForm()
+        #messages.error(request, 'Ошибка регистрации')
 
-    return render(request,'register.html',{'form':form})
+        return render(request,'register.html',{'form':form} )
 
-def login(request):
+def loginuser(request):
     if request.method == 'POST':
         form = AuthenticationForm(request,data=request.POST)
         if form.is_valid():
@@ -132,3 +95,34 @@ def login(request):
                 return redirect(index)
             else:
                 messages.error(request,'Неправильний логін або пароль')
+        else:
+            messages.error(request,'Ошибка в форме')
+
+    else:
+        form = AuthenticationForm()
+    return render(request,'login.html',{'form':form})
+
+def logoutuser(request):
+    logout(request)
+    return redirect('/')
+
+
+
+def menu_list_view(request):
+    all_menus = FemboyMenu.objects.all()
+    context = {
+        'all_menus':all_menus,
+    }
+    return render(request, 'menu_list.html',context=context)
+
+def menu_detail_view(request,menu_id):
+    menu = get_object_or_404(FemboyMenu,id=menu_id)
+    context = {
+        'menu':menu,
+    }
+    return render(request, 'menu_detail.html',context=context)
+
+def delete_booking(request,id):
+    booking = get_object_or_404(TableOrder,id=id)
+    booking.delete()
+    return redirect('index')

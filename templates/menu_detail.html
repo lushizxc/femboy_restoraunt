@@ -1,0 +1,27 @@
+{% extends "base.html"%}
+
+{% block content %}
+<h1>{{menu.name}}</h1>
+<p><em>Наше особое предложение, вдохновленное лучшими!</em></p>
+
+  <hr>
+
+  <h3>Что входит в этот сет:</h3>
+{% if menu.dishes_in_menu.all %}
+<ul>
+    {% for dish in menu.dishes_in_menu.all %}
+    <li>
+        <strong>{{dish.name}}</strong>({{dish.weight}}г.) - <em>${{dish.price}}</em>
+        <p>{{dish.description}}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Ой! Кажется, шеф-повар еще не добавил блюда в это меню! (⁄ ⁄•⁄ω⁄•⁄ ⁄)</p>
+{% endif %}
+
+<br>
+<a href="{% url 'menus' %}" class="btn-femboy-pink">
+  Назад ко всем меню
+</a>
+{% endblock %}
